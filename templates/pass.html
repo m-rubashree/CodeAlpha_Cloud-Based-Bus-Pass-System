@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bus Pass | CloudBus</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<nav>
+    <h2>🚌 CloudBus</h2>
+    <a href="/dashboard">Dashboard</a>
+</nav>
+
+<div class="form-container">
+    <h1>Apply for Bus Pass</h1>
+    <p>Choose your preferred pass type.</p>
+
+    {% with messages = get_flashed_messages() %}
+      {% for message in messages %}
+        <div class="message">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST">
+        <label>Pass Type</label>
+        <select name="pass_type" required>
+            <option value="">Select pass</option>
+            <option value="Monthly">Monthly Pass</option>
+            <option value="Quarterly">Quarterly Pass</option>
+            <option value="Student">Student Pass</option>
+        </select>
+
+        <label>Start Date</label>
+        <input type="date" name="start_date" id="start_date" required>
+
+        <button type="submit">Apply Now</button>
+    </form>
+</div>
+
+<script>
+document.getElementById("start_date").min =
+    new Date().toLocaleDateString("en-CA");
+</script>
+</body>
+</html>

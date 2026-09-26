@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %}Bus booking{% endblock %}
+
+{% block content %}
+
+{% if route %}
+
+<section class="page-wrap narrow">
+    <a class="back-link"
+       href="{{ url_for('search', source=route.source, destination=route.destination, travel_date=route.travel_date) }}">
+        ← Back to buses
+    </a>
+
+    <div class="page-heading">
+        <span class="section-kicker">SELECT YOUR SEAT</span>
+        <h1>Choose your seat</h1>
+        <p>Pick an available seat for your journey.</p>
+    </div>
+
+    <div class="trip-summary">
+        <div>
+            <span class="muted-label">YOUR JOURNEY</span>
+            <h3>{{ route.source }} <span class="route-arrow">→</span> {{ route.destination }}</h3>
+            <p>{{ route.bus_name }} · {{ route.bus_type }} · {{ route.travel_date }}</p>
+        </div>
+        <div class="trip-price">
+            ₹{{ '%.0f'|format(route.fare) }}
+            <small>per seat</small>
+        </div>
+    </div>
+
+    <div class="seat-layout-card">
+        <div class="seat-legend">
+            <span><i class="seat-dot available"></i> Available</span>
+            <span><i class="seat-dot booked"></i> Booked</span>
+            <span><i class="seat-dot selected"></i> Selected</span>
+        </div>
+
+        <div class="driver-row">
+            <span>FRONT</span>
+            <span class="steering">◉</span>
+        </div>
+
+        <form method="post" id="seat-form">
+            <div class="seat-map">
+                {% for row in range(1, 11) %}
+                    <div class="seat-row">
+                        {% for col in ['A', 'B'] %}
+                            {% set seat = row|string + col %}
+                            <label class="seat {% if seat in booked %}is-booked{% endif %}">
+                                <input
+                                    type="radio"
+                                    name="seat_number"
+                                    value="{{ seat }}"
+                                    {% if seat in booked %}disabled{% endif %}
+                                    required
+                                >
+                                <span>{{ seat }}</span>
+                            </label>
+                        {% endfor %}
+
+                        <span class="aisle"></span>
+
+                        {% for col in ['C', 'D'] %}
+                            {% set seat = row|string + col %}
+                            <label class="seat {% if seat in booked %}is-booked{% endif %}">
+                                <input
+                                    type="radio"
+                                    name="seat_number"
+                                    value="{{ seat }}"
+                                    {% if seat in booked %}disabled{% endif %}
+                                    required
+                                >
+                                <span>{{ seat }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="passenger-fields">
+                <label>
+                    Passenger name
+                    <input name="passenger_name" placeholder="Name as per ID" required maxlength="100">
+                </label>
+
+                <label>
+                    Age
+                    <input name="passenger_age" type="number" min="1" max="120" placeholder="Age" required>
+                </label>
+            </div>
+
+            <div class="booking-bottom">
+                <div>
+                    <small>Selected seat</small>
+                    <strong id="selected-seat">None</strong>
+                    <small>Ticket total</small>
+                    <strong>₹{{ '%.0f'|format(route.fare) }}</strong>
+                </div>
+
+                <button class="btn btn-primary" type="submit">
+                    Confirm booking <span>→</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <p class="prototype-note">
+        Demo: this prototype confirms bookings locally.
+        Online payment and live bus-operator inventory are not connected.
+    </p>
+</section>
+
+{% else %}
+
+<section class="page-wrap">
+    <div class="page-heading">
+        <span class="section-kicker">BUS SEARCH</span>
+        <h1>Available buses</h1>
+        <p>Compare the available services and choose a seat.</p>
+    </div>
+
+    <form class="results-search" action="{{ url_for('search') }}" method="get">
+        <input name="source" placeholder="From" value="{{ source or '' }}" required>
+        <input name="destination" placeholder="To" value="{{ destination or '' }}" required>
+        <input type="date" name="travel_date" value="{{ travel_date or '' }}">
+        <button class="btn btn-primary" type="submit">Search</button>
+    </form>
+
+    {% if routes %}
+        <div class="results-count">{{ routes|length }} bus service(s) found</div>
+
+        <div class="route-list">
+            {% for item in routes %}
+                <article class="route-card">
+                    <div class="route-operator">
+                        <span class="operator-logo">B</span>
+                        <div>
+                            <b>{{ item.bus_name }}</b>
+                            <small>{{ item.bus_type }} · {{ item.amenities }}</small>
+                        </div>
+                    </div>
+
+                    <div class="route-times">
+                        <div>
+                            <b>{{ item.departure }}</b>
+                            <small>{{ item.source }}</small>
+                        </div>
+                        <span class="journey-line"></span>
+                        <div>
+                            <b>{{ item.arrival }}</b>
+                            <small>{{ item.destination }}</small>
+                        </div>
+                    </div>
+
+                    <div class="route-fare">
+                        <small>Starting from</small>
+                        <b>₹{{ '%.0f'|format(item.fare) }}</b>
+                        <a class="btn btn-primary btn-small"
+                           href="{{ url_for('seat_booking', route_id=item.id) }}">
+                            Select seats →
+                        </a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <span>⌕</span>
+            <h3>No buses found</h3>
+            <p>Try another city pair or date.</p>
+            <a class="btn btn-outline" href="{{ url_for('index') }}">Back to home</a>
+        </div>
+    {% endif %}
+</section>
+
+{% endif %}
+
+{% endblock %}

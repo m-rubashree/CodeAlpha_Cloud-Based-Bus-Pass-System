@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Create account{% endblock %}
+
+{% block content %}
+<section class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-brand">B</div>
+        <span class="section-kicker">WELCOME ABOARD</span>
+        <h1>Create your account</h1>
+        <p class="auth-subtitle">
+            Join BharatBus and keep your journeys organized.
+        </p>
+
+        <form method="post" class="auth-form">
+            <label>
+                Full name
+                <input name="name" placeholder="Enter your name" required maxlength="100">
+            </label>
+
+            <label>
+                Email address
+                <input name="email" type="email" placeholder="name@example.com" required>
+            </label>
+
+            <label>
+                Password
+                <input name="password" type="password"
+                       placeholder="At least 8 characters" minlength="8" required>
+            </label>
+
+            <button class="btn btn-primary full-width" type="submit">
+                Create account →
+            </button>
+        </form>
+
+        <p class="auth-switch">
+            Already registered?
+            <a href="{{ url_for('login') }}">Log in</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% block title %}Admin console{% endblock %}
+
+{% block content %}
+<section class="page-wrap">
+    <div class="page-heading">
+        <span class="section-kicker">OPERATIONS</span>
+        <h1>Admin console</h1>
+        <p>Manage route listings, ticket bookings, and pass applications.</p>
+    </div>
+
+    <div class="admin-stats">
+        <div class="stat-card">
+            <small>ROUTES</small>
+            <b>{{ routes|length }}</b>
+        </div>
+        <div class="stat-card">
+            <small>BOOKINGS</small>
+            <b>{{ bookings|length }}</b>
+        </div>
+        <div class="stat-card">
+            <small>PASS REQUESTS</small>
+            <b>{{ passes|length }}</b>
+        </div>
+    </div>
+
+    <div class="admin-grid">
+        <section class="panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Add a bus route</h2>
+                    <p>Publish a route for customers to search.</p>
+                </div>
+            </div>
+
+            <form method="post" class="admin-form">
+                <label>
+                    Bus / operator name
+                    <input name="bus_name" required>
+                </label>
+
+                <label>
+                    Bus type
+                    <select name="bus_type">
+                        <option>AC Seater</option>
+                        <option>AC Sleeper</option>
+                        <option>Non-AC Seater</option>
+                        <option>Non-AC Sleeper</option>
+                    </select>
+                </label>
+
+                <label>
+                    From
+                    <input name="source" placeholder="Chennai" required>
+                </label>
+
+                <label>
+                    To
+                    <input name="destination" placeholder="Bengaluru" required>
+                </label>
+
+                <label>
+                    Departure
+                    <input type="time" name="departure" required>
+                </label>
+
+                <label>
+                    Arrival
+                    <input type="time" name="arrival" required>
+                </label>
+
+                <label>
+                    Travel date
+                    <input type="date" name="travel_date" required>
+                </label>
+
+                <label>
+                    Fare (₹)
+                    <input type="number" name="fare" min="1" step="1" required>
+                </label>
+
+                <label>
+                    Seat count
+                    <input type="number" name="seats" min="1" max="40" value="40" required>
+                </label>
+
+                <label class="span-two">
+                    Amenities
+                    <input name="amenities" placeholder="AC, Wi-Fi, Charging">
+                </label>
+
+                <button class="btn btn-primary span-two" type="submit">
+                    Add route +
+                </button>
+            </form>
+        </section>
+
+        <section class="panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Bus pass applications</h2>
+                    <p>Review and update application status.</p>
+                </div>
+            </div>
+
+            {% if passes %}
+                <div class="admin-list">
+                    {% for p in passes %}
+                        <div class="admin-row">
+                            <div>
+                                <b>{{ p.user.name }}</b>
+                                <small>
+                                    {{ p.pass_type }} · {{ p.start_date }} – {{ p.end_date }}
+                                </small>
+                                <span class="status {{ p.status|lower }}">
+                                    {{ p.status }}
+                                </span>
+                            </div>
+
+                            {% if p.status == 'Pending' %}
+                                <div class="inline-actions">
+                                    <form method="post"
+                                          action="{{ url_for('update_pass', pass_id=p.id, action='approve') }}">
+                                        <button class="mini-button approve">Approve</button>
+                                    </form>
+
+                                    <form method="post"
+                                          action="{{ url_for('update_pass', pass_id=p.id, action='reject') }}">
+                                        <button class="mini-button reject">Reject</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="muted">No pass applications yet.</p>
+            {% endif %}
+        </section>
+    </div>
+
+    <section class="panel table-panel">
+        <div class="panel-heading">
+            <div>
+                <h2>Route inventory</h2>
+                <p>Currently listed services</p>
+            </div>
+        </div>
+
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Operator</th>
+                        <th>Route</th>
+                        <th>Date</th>
+                        <th>Departure</th>
+                        <th>Fare</th>
+                        <th>Seats</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for r in routes %}
+                        <tr>
+                            <td>{{ r.bus_name }}<small>{{ r.bus_type }}</small></td>
+                            <td>{{ r.source }} → {{ r.destination }}</td>
+                            <td>{{ r.travel_date }}</td>
+                            <td>{{ r.departure }}</td>
+                            <td>₹{{ '%.0f'|format(r.fare) }}</td>
+                            <td>{{ r.seats }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel table-panel">
+        <div class="panel-heading">
+            <div>
+                <h2>Recent bookings</h2>
+                <p>Customer booking records</p>
+            </div>
+        </div>
+
+        {% if bookings %}
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking</th>
+                            <th>Passenger</th>
+                            <th>Route</th>
+                            <th>Seat</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for b in bookings %}
+                            <tr>
+                                <td>BB{{ '%06d'|format(b.id) }}</td>
+                                <td>{{ b.passenger_name }}<small>{{ b.user.email }}</small></td>
+                                <td>{{ b.route.source }} → {{ b.route.destination }}</td>
+                                <td>{{ b.seat_number }}</td>
+                                <td>
+                                    <span class="status {{ b.status|lower }}">
+                                        {{ b.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if b.status == 'Confirmed' %}
+                                        <form method="post"
+                                              action="{{ url_for('cancel_booking', booking_id=b.id) }}">
+                                            <button class="mini-button reject">Cancel</button>
+                                        </form>
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="muted">No bookings yet.</p>
+        {% endif %}
+    </section>
+</section>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+
+{% block content %}
+<section class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-brand">B</div>
+        <span class="section-kicker">GOOD TO SEE YOU</span>
+        <h1>Welcome back</h1>
+        <p class="auth-subtitle">
+            Log in to view your tickets and manage your trips.
+        </p>
+
+        <form method="post" class="auth-form">
+            <label>
+                Email address
+                <input name="email" type="email" placeholder="name@example.com" required>
+            </label>
+
+            <label>
+                Password
+                <input name="password" type="password" placeholder="Your password" required>
+            </label>
+
+            <button class="btn btn-primary full-width" type="submit">
+                Log in →
+            </button>
+        </form>
+
+        <p class="auth-switch">
+            New to BharatBus?
+            <a href="{{ url_for('register') }}">Create an account</a>
+        </p>
+
+        <div class="demo-credentials">
+            <b>Admin demo</b>
+            <span>admin@bus.com</span>
+            <span>Admin@12345</span>
+            <small>Change these credentials before deployment.</small>
+        </div>
+    </div>
+</section>
+{% endblock %}

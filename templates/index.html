@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}Travel across India{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <div class="hero-copy">
+        <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            YOUR JOURNEY, OUR PRIORITY
+        </div>
+
+        <h1>Every journey<br>starts <em>here.</em></h1>
+
+        <p class="hero-lead">
+            Discover India, one comfortable ride at a time.
+            Find buses, choose your seat, and keep your ticket
+            right at your fingertips.
+        </p>
+
+        <div class="hero-points">
+            <span>✓ Easy booking</span>
+            <span>✓ Secure e-tickets</span>
+            <span>✓ Pan-India routes</span>
+        </div>
+    </div>
+
+    <div class="hero-visual">
+        <div class="hero-image-wrap">
+            <img
+                src="{{ url_for('static', filename='images/hero-bus.jfif') }}"
+                alt="Modern green intercity bus"
+            >
+
+            <div class="image-tag">
+                <span class="tag-icon">✦</span>
+                <span>
+                    <b>Go places.</b>
+                    <small>Make memories.</small>
+                </span>
+            </div>
+        </div>
+
+        <div class="float-card">
+            <span class="float-icon">↗</span>
+            <span>
+                <b>Across India</b>
+                <small>One booking at a time</small>
+            </span>
+        </div>
+    </div>
+</section>
+
+<section class="search-panel">
+    <div class="search-heading">
+        <div>
+            <span class="section-kicker">PLAN YOUR TRIP</span>
+            <h2>Where are you going?</h2>
+        </div>
+        <span class="secure-note">♧ Simple & secure booking</span>
+    </div>
+
+    <form class="search-form" action="{{ url_for('search') }}" method="get">
+
+        <label class="field">
+            <span class="field-icon">⌖</span>
+            <span class="field-content">
+                <small>FROM</small>
+                <input list="cities" name="source" placeholder="Departure city" required>
+            </span>
+        </label>
+
+        <span class="swap-icon">⇄</span>
+
+        <label class="field">
+            <span class="field-icon">◎</span>
+            <span class="field-content">
+                <small>TO</small>
+                <input list="cities" name="destination" placeholder="Arrival city" required>
+            </span>
+        </label>
+
+        <datalist id="cities">
+            {% for city in cities %}
+                <option value="{{ city }}">
+            {% endfor %}
+        </datalist>
+
+        <label class="field date-field">
+            <span class="field-icon">▦</span>
+            <span class="field-content">
+                <small>JOURNEY DATE</small>
+                <input type="date" name="travel_date" id="travel-date" required>
+            </span>
+        </label>
+
+        <button class="btn btn-primary search-button" type="submit">
+            Search buses <span>→</span>
+        </button>
+    </form>
+
+    <p class="search-hint">
+        Popular routes: Chennai – Bengaluru · Delhi – Jaipur · Mumbai – Pune
+    </p>
+</section>
+
+<section class="feature-section">
+    <div class="section-heading">
+        <div>
+            <span class="section-kicker">TRAVEL MADE SIMPLE</span>
+            <h2>Everything you need for the road</h2>
+        </div>
+        <p>
+            From finding your bus to keeping your ticket handy,
+            your trip is organized in one place.
+        </p>
+    </div>
+
+    <div class="feature-grid">
+        <article class="feature-card">
+            <span class="feature-icon mint">⌕</span>
+            <h3>Find your route</h3>
+            <p>Explore available routes between major cities across India.</p>
+        </article>
+
+        <article class="feature-card">
+            <span class="feature-icon lavender">▦</span>
+            <h3>Choose your seat</h3>
+            <p>View the seat layout and select an available seat before booking.</p>
+        </article>
+
+        <article class="feature-card">
+            <span class="feature-icon peach">▤</span>
+            <h3>Digital ticket</h3>
+            <p>See your booking details and ticket from your dashboard.</p>
+        </article>
+
+        <article class="feature-card">
+            <span class="feature-icon blue">♧</span>
+            <h3>Bus pass</h3>
+            <p>Apply for a pass and track its approval status online.</p>
+        </article>
+    </div>
+</section>
+
+{% endblock %}

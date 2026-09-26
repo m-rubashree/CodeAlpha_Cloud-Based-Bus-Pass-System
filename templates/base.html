@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}BusBooking{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="{{ url_for('index') }}">
+        <span class="brand-mark">B</span>
+        <span>Bus<span class="brand-accent">Booking</span>
+            <small>TRAVEL ACROSS INDIA</small>
+        </span>
+    </a>
+
+    <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('search') }}">Bus tickets</a>
+
+        {% if session.get('user_id') %}
+            <a href="{{ url_for('dashboard') }}">My bookings</a>
+        {% endif %}
+
+        {% if session.get('is_admin') %}
+            <a href="{{ url_for('admin') }}">Admin</a>
+        {% endif %}
+    </nav>
+
+    <div class="nav-actions">
+        {% if session.get('user_id') %}
+            <span class="welcome">Hi, {{ session.get('name') }}</span>
+            <a class="btn btn-outline btn-small" href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a class="login-link" href="{{ url_for('login') }}">Log in</a>
+            <a class="btn btn-primary btn-small" href="{{ url_for('register') }}">Create account</a>
+        {% endif %}
+    </div>
+</header>
+
+<main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-wrap">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">
+                        {{ message }}
+                        <button type="button" onclick="this.parentElement.remove()">×</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <a class="brand footer-brand" href="{{ url_for('index') }}">
+            <span class="brand-mark">B</span>
+            <span>Bus<span class="brand-accent">Booking</span>
+                <small>TRAVEL ACROSS INDIA</small>
+            </span>
+        </a>
+        <p>Plan your journey. Book with confidence.</p>
+        <span>© 2026 BusBooking · Demo application</span>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
